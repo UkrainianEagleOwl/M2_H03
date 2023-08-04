@@ -55,13 +55,13 @@ def create_default_folders(path):
     return dic
 
 
-def analisis_file_object_dir(file_object, category_folders):
+def analisis_file_object_dir(file_object):
     if file_object.name in FOLDERS_NAMES:
         return None
     elif not any(file_object.iterdir()):
         file_object.rmdir()
     else:
-        analisis_folder_contents(file_object, category_folders)
+        analisis_folder_contents(file_object)
         if not any(file_object.iterdir()):
             file_object.rmdir()
         else:
@@ -74,23 +74,23 @@ def process_file(file_object, path):
     # Using the match statement to implement the switch-like behavior
     match suffix:
         case ext if ext in IMAGES_EXT:
-            move_file_to_folder(file_object, FOLDERS_NAMES[0], path)
+            move_file_to_folder(file_object, FOLDERS_NAMES[0])
         case ext if ext in VIDEO_EXT:
-            move_file_to_folder(file_object, FOLDERS_NAMES[3], path)
+            move_file_to_folder(file_object, FOLDERS_NAMES[3])
         case ext if ext in MUSIC_EXT:
-            move_file_to_folder(file_object, FOLDERS_NAMES[2], path)
+            move_file_to_folder(file_object, FOLDERS_NAMES[2])
         case ext if ext in DOC_EXT:
-            move_file_to_folder(file_object, FOLDERS_NAMES[1], path)
+            move_file_to_folder(file_object, FOLDERS_NAMES[1])
         case ext if ext in ARCHIVES_EXT:
             unpack_and_remove_archive(file_object)
         case _:
             add_to_unknown_ext_list(file_object)
 
 
-def move_file_to_folder(file_object, folder_name, path):
+def move_file_to_folder(file_object, folder_name):
     move(
         file_object,
-        DEFAULT_FOLDERS.get(folder_name, path) / normalize(file_object.name),
+        DEFAULT_FOLDERS[folder_name] / normalize(file_object.name),
     )
     if file_object.suffix not in known_ext:
         known_ext.append(file_object.suffix)
@@ -127,8 +127,8 @@ def analisis_folder_contents(path):
 
 def sort_path(path):
     prepare_translate_dict()
-    path = sys.argv[1]
     work_file = pathlib.Path(path)
+    global DEFAULT_FOLDERS 
     DEFAULT_FOLDERS = create_default_folders(work_file)
     analisis_folder_contents(work_file)
     for k, v in DEFAULT_FOLDERS.items():
@@ -148,4 +148,5 @@ def main():
 # -----------------------------------------------------------
 # Основна (main) частина
 if __name__ == "__main__":
-    main()
+    #main()
+    sort_path('D/Test/')
